@@ -1,8 +1,12 @@
 package com.ever.audit.example.using.envers.domain.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -10,6 +14,10 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Audited
+@AuditTable("historico_alteracao_pessoa")
+@EntityListeners(AuditingEntityListener.class)
+@Builder
 public class Pessoa {
 
     @Id
@@ -27,5 +35,8 @@ public class Pessoa {
 
     @Column(length = 80, name = "nome_pai")
     private String nomePai;
+
+    @Column
+    private Boolean ativo;
 
 }

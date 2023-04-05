@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +26,20 @@ public class PessoaController {
     @GetMapping("/{id}")
     public ResponseEntity<PessoaResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(pessoaService.findById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PessoaResponseDTO> alterPeaple (@PathVariable Long id, @RequestBody PessoaRequestDTO requestDTO) {
+        return ResponseEntity.ok().body(pessoaService.alterPeaple(id,requestDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePeaple (@PathVariable Long id){
+        pessoaService.deletePealple(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PessoaResponseDTO>> findAll(){
+        return ResponseEntity.ok().body(pessoaService.findAll());
     }
 }
