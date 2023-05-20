@@ -36,6 +36,9 @@ public class Pessoa {
     @Column(length = 80, name = "nome_pai")
     private String nomePai;
 
+    @Column(name = "justificativa_edicao")
+    private String justificativa;
+
     @Column
     private Boolean ativo;
 
