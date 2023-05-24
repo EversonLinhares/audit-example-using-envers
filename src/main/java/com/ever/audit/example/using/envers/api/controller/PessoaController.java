@@ -1,10 +1,15 @@
 package com.ever.audit.example.using.envers.api.controller;
 
 import com.ever.audit.example.using.envers.api.dto.request.PessoaRequestDTO;
+import com.ever.audit.example.using.envers.api.dto.request.PessoaUpdateRequestDTO;
+import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.PessoaResponseDTO;
 import com.ever.audit.example.using.envers.api.mapper.MapperConvert;
 import com.ever.audit.example.using.envers.domain.service.PessoaService;
+import com.ever.audit.example.using.envers.domain.service.Utils.AppConstants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +34,7 @@ public class PessoaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PessoaResponseDTO> alterPeaple (@PathVariable Long id, @RequestBody PessoaRequestDTO requestDTO) {
+    public ResponseEntity<PessoaResponseDTO> alterPeaple (@PathVariable Long id, @RequestBody PessoaUpdateRequestDTO requestDTO) {
         return ResponseEntity.ok().body(pessoaService.alterPeaple(id,requestDTO));
     }
 
@@ -40,6 +45,27 @@ public class PessoaController {
 
     @GetMapping
     public ResponseEntity<List<PessoaResponseDTO>> findAll(){
+        List<PessoaResponseDTO> pessoas = pessoaService.findAll();
+        if( pessoas.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok().body(pessoaService.findAll());
+    }
+
+    @GetMapping("/historico-alteracao")
+    public ResponseEntity<Page<HistoricoResponseDTO>> pesquisarHistoricoAlteracaoPessoas (
+            @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_NUMERO_PAGINA, required = false) int page,
+            @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_TOTAL_PAGINA, required = false) int size,
+            @RequestParam(value = "dataInicial", required = false) String dataInicial,
+            @RequestParam(value = "dataFinal", required = false) String dataFinal,
+            @RequestParam(value = "campo", required = false) String campo) {
+
+        Page<HistoricoResponseDTO> pageHistoricoAlteracoes = pessoaService
+                .pesquisarHistoricoAlteracaoPessoas(page, size, campo, dataInicial, dataFinal);
+
+        if (pageHistoricoAlteracoes.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok().body(pageHistoricoAlteracoes);
     }
 }

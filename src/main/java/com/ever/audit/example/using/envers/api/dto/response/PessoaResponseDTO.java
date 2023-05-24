@@ -8,4 +8,7 @@ public class PessoaResponseDTO {
     private Long id;
     private String nome;
     private String nomeSocial;
+    private String nomePai;
+    private String nomeMae;
+    private Boolean ativo;
 }

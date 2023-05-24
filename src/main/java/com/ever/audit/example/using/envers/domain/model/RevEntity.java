@@ -1,5 +1,6 @@
-package com.ever.audit.example.using.envers.core.security;
+package com.ever.audit.example.using.envers.domain.model;
 
+import com.ever.audit.example.using.envers.core.security.UsuarioListener;
 import lombok.Data;
 import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;

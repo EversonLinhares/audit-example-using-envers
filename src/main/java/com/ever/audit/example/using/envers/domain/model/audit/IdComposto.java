@@ -1,6 +1,6 @@
 package com.ever.audit.example.using.envers.domain.model.audit;
 
-import com.ever.audit.example.using.envers.core.security.RevEntity;
+import com.ever.audit.example.using.envers.domain.model.RevEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
