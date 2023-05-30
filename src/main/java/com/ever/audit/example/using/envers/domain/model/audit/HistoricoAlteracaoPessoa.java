@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HistoricoAlteracaoPessoa  implements Diffable<HistoricoAlteracaoPessoa> {
+public class HistoricoAlteracaoPessoa implements Diffable<HistoricoAlteracaoPessoa> {
 
     @EmbeddedId
     private IdComposto id;

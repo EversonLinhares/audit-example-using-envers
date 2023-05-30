@@ -2,8 +2,6 @@ package com.ever.audit.example.using.envers.core.diffable;
 
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.domain.model.RevEntity;
-import com.ever.audit.example.using.envers.domain.model.audit.HistoricoAlteracaoPessoa;
-import com.ever.audit.example.using.envers.domain.service.Utils.AppConstants;
 import org.apache.commons.lang3.builder.DiffResult;
 import org.apache.commons.lang3.builder.Diffable;
 

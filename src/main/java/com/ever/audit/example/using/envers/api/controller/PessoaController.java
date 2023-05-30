@@ -4,7 +4,6 @@ import com.ever.audit.example.using.envers.api.dto.request.PessoaRequestDTO;
 import com.ever.audit.example.using.envers.api.dto.request.PessoaUpdateRequestDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.PessoaResponseDTO;
-import com.ever.audit.example.using.envers.api.mapper.MapperConvert;
 import com.ever.audit.example.using.envers.domain.service.PessoaService;
 import com.ever.audit.example.using.envers.domain.service.Utils.AppConstants;
 import lombok.RequiredArgsConstructor;

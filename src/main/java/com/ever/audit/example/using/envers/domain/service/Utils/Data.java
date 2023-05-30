@@ -34,8 +34,10 @@ public class Data {
     }
 
     private static void validaDataInicialFinal(LocalDateTime periodoInicial, LocalDateTime periodoFinal, String mensagem) {
-        if (periodoFinal.isBefore(periodoInicial)) {
-            throw new NegocioException(mensagem);
+        if (Objects.nonNull(periodoFinal) && Objects.nonNull(periodoFinal)){
+            if (periodoFinal.isBefore(periodoInicial)) {
+                throw new NegocioException(mensagem);
+            }
         }
     }
 
@@ -43,10 +45,10 @@ public class Data {
         if (periodoInicial && periodoFinal) throw new NegocioException(mensagem);
     }
 
-    public static Timestamp converterLocalDateTimeEmTimestamp(LocalDateTime data) {
+    public static Long converterLocalDateTimeEmTimestamp(LocalDateTime data) {
         try {
             if(data != null) {
-                return Timestamp.valueOf(data);
+                return Timestamp.valueOf(data).getTime();
             }
             return null;
         } catch (Exception e) {
