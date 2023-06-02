@@ -24,7 +24,10 @@ public interface PessoaRepository extends JpaRepository<Pessoa,Long> {
             @Param("periodoInicial") Long periodoInicial,
             @Param("periodoFinal") Long periodoFinal);
 
-    @Query(value = "select * FROM historico_alteracao_pessoa as h JOIN rev_auditoria ra ON ra.rev = h.rev "
-            + " AND ra.rev < :rev_id ORDER BY ra.rev DESC LIMIT 1", nativeQuery = true)
-    HistoricoAlteracaoPessoa buscaRegistroAnterior(@Param("rev_id") Long id);
+    @Query(value = "select h FROM HistoricoAlteracaoPessoa h inner join RevEntity re ON re.rev = h.id.rev "
+            + " where re.rev < :rev_id ORDER BY re.rev DESC ")
+    List<HistoricoAlteracaoPessoa> buscaRegistroAnterior(@Param("rev_id") Long id);
+
+    @Query(value = "SELECT h FROM HistoricoAlteracaoPessoa h WHERE (h.id.id = :idPessoa)")
+    List<HistoricoAlteracaoPessoa> buscarPorId(@Param("idPessoa") Long idPessoa);
 }

@@ -1,5 +1,6 @@
 package com.ever.audit.example.using.envers.core.diffable;
 
+import com.ever.audit.example.using.envers.api.dto.response.HistoricoCampoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.domain.model.RevEntity;
 import org.apache.commons.lang3.builder.DiffResult;
@@ -37,5 +38,27 @@ public class Diff {
 
     public static String validar(Object campo) {
         return Objects.nonNull(campo) ? campo.toString() : "";
+    }
+
+    public void buscarCamposAlterados(final Diffable objetoAntigo, final Diffable objetoNovo,
+                                      List<HistoricoCampoResponseDTO> camposAlterados) {
+
+        try {
+            DiffResult<?> diffResult = objetoAntigo.diff(objetoNovo);
+
+            for (org.apache.commons.lang3.builder.Diff<?> diff : diffResult) {
+
+                HistoricoCampoResponseDTO historicoAlteracaoDTO = new HistoricoCampoResponseDTO();
+                historicoAlteracaoDTO.setCampoAlterado(diff.getFieldName());
+                historicoAlteracaoDTO.setDescricao(diff.getFieldName());
+
+                if (!camposAlterados.contains(historicoAlteracaoDTO) && !Objects.equals(historicoAlteracaoDTO.getCampoAlterado(), "justificativa")) {
+                    camposAlterados.add(historicoAlteracaoDTO);
+                }
+            }
+
+        } catch (Exception e) {
+            e.getMessage();
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.ever.audit.example.using.envers.domain.service;
 
 import com.ever.audit.example.using.envers.api.dto.request.PessoaRequestDTO;
 import com.ever.audit.example.using.envers.api.dto.request.PessoaUpdateRequestDTO;
+import com.ever.audit.example.using.envers.api.dto.response.HistoricoCampoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.PessoaResponseDTO;
 import com.ever.audit.example.using.envers.api.mapper.MapperConvert;
@@ -134,9 +135,29 @@ public class PessoaService {
     }
 
     private List<HistoricoAlteracaoPessoa> addRegistroAnteriorAoPrimeiroNoHistoricoBD(List<HistoricoAlteracaoPessoa> historicoAtual) {
-        HistoricoAlteracaoPessoa registroAnterior = pessoaRepository
+        List<HistoricoAlteracaoPessoa> registroAnterior = pessoaRepository
                 .buscaRegistroAnterior(historicoAtual.get(0).getId().getRev().getRev());
-        historicoAtual.add(0, registroAnterior);
+        HistoricoAlteracaoPessoa registro = registroAnterior.get(0);
+        historicoAtual.add(0, registro);
         return historicoAtual;
+    }
+
+    public List<HistoricoCampoResponseDTO> buscarCamposAlterados(Long idPessoa) {
+        List<HistoricoCampoResponseDTO> relatorioAlteracao = new ArrayList<>();
+        List<HistoricoAlteracaoPessoa> historico = pessoaRepository
+                .buscarPorId(idPessoa);
+
+        for (int i = 0; historico.size() > i; i++) {
+            HistoricoAlteracaoPessoa historicoAtual = historico.get(i);
+
+            Integer acaoHistorico = historicoAtual.getRevtype();
+
+            if (Objects.equals(acaoHistorico, AppConstants.UPDATE)) {
+                HistoricoAlteracaoPessoa historicoAnterior = historico.get(i - 1);
+                new Diff().buscarCamposAlterados(historicoAnterior, historicoAtual, relatorioAlteracao);
+            }
+        }
+
+        return relatorioAlteracao;
     }
 }

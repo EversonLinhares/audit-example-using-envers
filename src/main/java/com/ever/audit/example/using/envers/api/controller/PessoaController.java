@@ -2,6 +2,7 @@ package com.ever.audit.example.using.envers.api.controller;
 
 import com.ever.audit.example.using.envers.api.dto.request.PessoaRequestDTO;
 import com.ever.audit.example.using.envers.api.dto.request.PessoaUpdateRequestDTO;
+import com.ever.audit.example.using.envers.api.dto.response.HistoricoCampoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.PessoaResponseDTO;
 import com.ever.audit.example.using.envers.domain.service.PessoaService;
@@ -66,5 +67,16 @@ public class PessoaController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.ok().body(pageHistoricoAlteracoes);
+    }
+
+    @GetMapping("/historico-alteracao/campos/{idPessoa}")
+    public ResponseEntity<List<HistoricoCampoResponseDTO>> buscarCamposAlterados(@PathVariable(name = "idPessoa") Long idPessoa) {
+        List<HistoricoCampoResponseDTO> listaCampos = pessoaService.buscarCamposAlterados(idPessoa);
+
+        if (listaCampos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(listaCampos);
     }
 }
