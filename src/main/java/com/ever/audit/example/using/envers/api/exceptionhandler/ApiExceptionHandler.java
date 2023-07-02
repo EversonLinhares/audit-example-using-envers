@@ -1,5 +1,6 @@
 package com.ever.audit.example.using.envers.api.exceptionhandler;
 
+import com.ever.audit.example.using.envers.domain.exception.NegocioException;
 import com.ever.audit.example.using.envers.domain.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -34,6 +35,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                          WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         ProblemTypeBean problemType = new ProblemTypeBean(ProblemType.RECURSO_NAO_ENCONTRADO, request.getContextPath());
+        String detail = ex.getMessage();
+
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(detail)
+                .build();
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<?> handleNegocioException(NegocioException ex,
+                                                         WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemTypeBean problemType = new ProblemTypeBean(ProblemType.REGRA_NEGOCIO, request.getContextPath());
         String detail = ex.getMessage();
 
         Problem problem = createProblemBuilder(status, problemType, detail)

@@ -5,7 +5,9 @@ import lombok.Getter;
 @Getter
 public enum ProblemType {
     DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos"),
-    RECURSO_NAO_ENCONTRADO("/recurso-nao-encontrado", "Recurso não encontrado");
+    RECURSO_NAO_ENCONTRADO("/recurso-nao-encontrado", "Recurso não encontrado"),
+
+    REGRA_NEGOCIO("/regra-negocio", "Regra de negócio");
 
     private String title;
     private String path;
