@@ -4,7 +4,6 @@ import com.ever.audit.example.using.envers.domain.exception.NegocioException;
 import com.ever.audit.example.using.envers.domain.exception.ObjectNotFoundException;
 import com.ever.audit.example.using.envers.domain.model.Documento;
 import com.ever.audit.example.using.envers.domain.repository.DocumentoRepository;
-import com.ever.audit.example.using.envers.domain.service.Utils.Validations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,19 +22,19 @@ public class DocumentoService {
         try {
             verifyExtension(file);
             byte[] fileBytes = file.getBytes();
-            Documento novoDocumento = Documento.builder()
+            Documento newDocument = Documento.builder()
                     .nome(file.getOriginalFilename())
                     .file(fileBytes)
                     .build();
-            return documentoRepository.save(novoDocumento);
+            return documentoRepository.save(newDocument);
         }catch (IOException e){
             throw new NegocioException(e.getMessage());
         }
     }
 
     public Documento findById(Long id) {
-        Documento documento = documentoRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Não foi encontrado Documento com id : " + id));
-        return documento;
+        Documento document = documentoRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("No document found with id : " + id));
+        return document;
     }
 }

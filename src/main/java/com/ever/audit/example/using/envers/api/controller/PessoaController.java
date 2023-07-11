@@ -12,8 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,7 +27,12 @@ public class PessoaController {
 
     @PostMapping
     public ResponseEntity<PessoaResponseDTO> create (@RequestBody @Valid PessoaRequestDTO pessoa){
-        return ResponseEntity.ok().body(pessoaService.create(pessoa));
+        PessoaResponseDTO pessoaResponseDTO = pessoaService.create(pessoa);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(pessoaResponseDTO.getId())
+                .toUri();
+        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/{id}")
@@ -34,7 +41,8 @@ public class PessoaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PessoaResponseDTO> alterPeaple (@PathVariable Long id, @RequestBody PessoaUpdateRequestDTO requestDTO) {
+    public ResponseEntity<PessoaResponseDTO> alterPeaple (@PathVariable Long id,
+                                                          @RequestBody PessoaUpdateRequestDTO requestDTO) {
         return ResponseEntity.ok().body(pessoaService.alterPeaple(id,requestDTO));
     }
 
@@ -53,15 +61,15 @@ public class PessoaController {
     }
 
     @GetMapping("/historico-alteracao")
-    public ResponseEntity<Page<HistoricoResponseDTO>> pesquisarHistoricoAlteracaoPessoas (
+    public ResponseEntity<Page<HistoricoResponseDTO>> searchHistory (
             @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_NUMERO_PAGINA, required = false) int page,
             @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_TOTAL_PAGINA, required = false) int size,
-            @RequestParam(value = "dataInicial", required = false) String dataInicial,
-            @RequestParam(value = "dataFinal", required = false) String dataFinal,
-            @RequestParam(value = "campo", required = false) String campo) {
+            @RequestParam(value = "dateInitial", required = false) String dateInitial,
+            @RequestParam(value = "finalDate", required = false) String finalDate,
+            @RequestParam(value = "field", required = false) String field) {
 
         Page<HistoricoResponseDTO> pageHistoricoAlteracoes = pessoaService
-                .pesquisarHistoricoAlteracaoPessoas(page, size, campo, dataInicial, dataFinal);
+                .pesquisarHistoricoAlteracaoPessoas(page, size, field, dateInitial, finalDate);
 
         if (pageHistoricoAlteracoes.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

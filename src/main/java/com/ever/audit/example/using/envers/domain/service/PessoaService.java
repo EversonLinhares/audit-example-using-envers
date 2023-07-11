@@ -65,19 +65,19 @@ public class PessoaService {
     }
 
     public List<PessoaResponseDTO> findAll() {
-        return pessoaRepository.findAll().stream().map(p -> mapperConvert.mapEntityToDto(p, PessoaResponseDTO.class)).collect(Collectors.toList());
+        return mapperConvert.collectionToDto(pessoaRepository.findAll(),PessoaResponseDTO.class);
     }
 
-    public Page<HistoricoResponseDTO> pesquisarHistoricoAlteracaoPessoas(int page, int size, String campo,
-                                                                         String dataInicial, String dataFinal) {
+    public Page<HistoricoResponseDTO> pesquisarHistoricoAlteracaoPessoas(int page, int size, String field,
+                                                                         String dateInitial, String finalDate) {
         int indiceRelatorio = 0;
         LocalDateTime periodoInicial = null;
         LocalDateTime periodoFinal = null;
-        if (Objects.nonNull(dataInicial)) {
-            periodoInicial = Data.stringToLocalDateTime(dataInicial, false);
+        if (Objects.nonNull(dateInitial)) {
+            periodoInicial = Data.stringToLocalDateTime(dateInitial, false);
         }
-        if (Objects.nonNull(dataFinal)) {
-            periodoFinal = Data.stringToLocalDateTime(dataFinal, true);
+        if (Objects.nonNull(finalDate)) {
+            periodoFinal = Data.stringToLocalDateTime(finalDate, true);
         }
         Data.validarDatas(periodoInicial, periodoFinal);
         List<HistoricoAlteracaoPessoa> historicoAlteracaoPessoas = pessoaRepository
@@ -95,7 +95,7 @@ public class PessoaService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        return paginarResultado(campo, pageable, relatorioAlteracao);
+        return paginarResultado(field, pageable, relatorioAlteracao);
     }
 
     private List<HistoricoResponseDTO> gerarRelatorio(List<HistoricoAlteracaoPessoa> listaHistorico, int indice) {

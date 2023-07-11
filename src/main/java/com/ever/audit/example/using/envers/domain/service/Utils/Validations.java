@@ -20,10 +20,10 @@ public class Validations {
 
     }
 
-    public static HttpHeaders createHeaders(Documento documento) {
+    public static HttpHeaders createHeaders(Documento document) {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentDisposition(ContentDisposition.attachment()
-                .filename(String.format(documento.getNome())).build());
+                .filename(String.format(document.getNome())).build());
         return responseHeaders;
     }
 }
