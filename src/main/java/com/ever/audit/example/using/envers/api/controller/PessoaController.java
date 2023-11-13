@@ -5,6 +5,7 @@ import com.ever.audit.example.using.envers.api.dto.request.PessoaUpdateRequestDT
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoCampoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.PessoaResponseDTO;
+import com.ever.audit.example.using.envers.domain.service.HistoricoPessoaService;
 import com.ever.audit.example.using.envers.domain.service.PessoaService;
 import com.ever.audit.example.using.envers.domain.service.Utils.AppConstants;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.List;
 public class PessoaController {
 
     private final PessoaService pessoaService;
+    private final HistoricoPessoaService historicoPessoaService;
 
     @PostMapping
     public ResponseEntity<PessoaResponseDTO> create (@RequestBody @Valid PessoaRequestDTO pessoa){
@@ -60,16 +62,19 @@ public class PessoaController {
         return ResponseEntity.ok().body(pessoaService.findAll());
     }
 
-    @GetMapping("/historico-alteracao")
-    public ResponseEntity<Page<HistoricoResponseDTO>> searchHistory (
+    @GetMapping("/historico-alteracao/{id}")
+    public ResponseEntity<Page<HistoricoResponseDTO>> historyPaged (
+            @PathVariable("id") Long id,
             @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_NUMERO_PAGINA, required = false) int page,
             @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_TOTAL_PAGINA, required = false) int size,
-            @RequestParam(value = "dateInitial", required = false) String dateInitial,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECAO, required = false) String sortDir,
+            @RequestParam(value = "initialDate", required = false) String initialDate,
             @RequestParam(value = "finalDate", required = false) String finalDate,
             @RequestParam(value = "field", required = false) String field) {
 
-        Page<HistoricoResponseDTO> pageHistoricoAlteracoes = pessoaService
-                .pesquisarHistoricoAlteracaoPessoas(page, size, field, dateInitial, finalDate);
+        Page<HistoricoResponseDTO> pageHistoricoAlteracoes = historicoPessoaService
+                .findHistoryPeaple(id, page, size, sortBy, sortDir, field, initialDate, finalDate);
 
         if (pageHistoricoAlteracoes.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -79,7 +84,7 @@ public class PessoaController {
 
     @GetMapping("/historico-alteracao/campos/{idPessoa}")
     public ResponseEntity<List<HistoricoCampoResponseDTO>> buscarCamposAlterados(@PathVariable(name = "idPessoa") Long idPessoa) {
-        List<HistoricoCampoResponseDTO> listaCampos = pessoaService.buscarCamposAlterados(idPessoa);
+        List<HistoricoCampoResponseDTO> listaCampos = historicoPessoaService.buscarCamposAlterados(idPessoa);
 
         if (listaCampos.isEmpty()) {
             return ResponseEntity.noContent().build();

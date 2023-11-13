@@ -1,6 +1,6 @@
 package com.ever.audit.example.using.envers.domain.model;
 
-import com.ever.audit.example.using.envers.core.security.UsuarioListener;
+import com.ever.audit.example.using.envers.core.security.UserListener;
 import lombok.Data;
 import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "rev_auditoria")
-@RevisionEntity(UsuarioListener.class)
+@RevisionEntity(UserListener.class)
 public class RevEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,7 +2,7 @@ package com.ever.audit.example.using.envers.core.security;
 import com.ever.audit.example.using.envers.domain.model.RevEntity;
 import org.hibernate.envers.RevisionListener;
 
-public class UsuarioListener implements RevisionListener{
+public class UserListener implements RevisionListener{
 
     @Override
     public void newRevision(Object revisionEntity) {
