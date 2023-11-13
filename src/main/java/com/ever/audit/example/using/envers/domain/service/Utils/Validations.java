@@ -26,4 +26,15 @@ public class Validations {
                 .filename(String.format(document.getNome())).build());
         return responseHeaders;
     }
+
+    public static String formatarDescricao(String descricao) {
+        String output = descricao.replaceAll("(\\p{Lu})", " $1").trim();
+        output = output.replaceAll("(\\d)", " $1").trim().toLowerCase();
+        output = output.substring(0, 1).toUpperCase() + output.substring(1);
+        return adicionarAcentuacao(output);
+    }
+
+    public static String adicionarAcentuacao(String string) {
+        return string.replace("mae", "mãe");
+    }
 }

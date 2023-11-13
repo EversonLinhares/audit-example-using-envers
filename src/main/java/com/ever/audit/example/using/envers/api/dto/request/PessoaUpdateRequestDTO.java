@@ -9,12 +9,13 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class PessoaUpdateRequestDTO {
 
-    @NotBlank
     private String nome;
 
-    @NotBlank
     private String nomeSocial;
 
-    @NotBlank
+    private String nomeMae;
+
+    private String nomePai;
+
     private String justificativa;
 }
