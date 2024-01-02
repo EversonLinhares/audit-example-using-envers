@@ -2,6 +2,7 @@ package com.ever.audit.example.using.envers.api.controller;
 
 import com.ever.audit.example.using.envers.api.dto.request.PessoaRequestDTO;
 import com.ever.audit.example.using.envers.api.dto.request.PessoaUpdateRequestDTO;
+import com.ever.audit.example.using.envers.api.dto.response.DataHistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoCampoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.PessoaResponseDTO;
@@ -91,5 +92,11 @@ public class PessoaController {
         }
 
         return ResponseEntity.ok(listaCampos);
+    }
+
+    @GetMapping("/historico-alteracao-data/{idPessoa}")
+    public ResponseEntity<DataHistoricoResponseDTO> buscaDataAlteracoes(@PathVariable("idPessoa") Long idPessoa){
+        return ResponseEntity.ok(
+                historicoPessoaService.buscaDataAlteracao(idPessoa));
     }
 }

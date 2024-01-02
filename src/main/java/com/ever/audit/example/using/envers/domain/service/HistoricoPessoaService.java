@@ -1,8 +1,10 @@
 package com.ever.audit.example.using.envers.domain.service;
 
+import com.ever.audit.example.using.envers.api.dto.response.DataHistoricoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoCampoResponseDTO;
 import com.ever.audit.example.using.envers.api.dto.response.HistoricoResponseDTO;
 import com.ever.audit.example.using.envers.core.diffable.Diff;
+import com.ever.audit.example.using.envers.domain.exception.ObjectNotFoundException;
 import com.ever.audit.example.using.envers.domain.model.Pessoa;
 import com.ever.audit.example.using.envers.domain.model.RevEntity;
 import com.ever.audit.example.using.envers.domain.service.Utils.Data;
@@ -15,7 +17,9 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,11 +67,6 @@ public class HistoricoPessoaService {
         filterRevisions = filterByFields(field, filterRevisions);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDir), sortBy));
-//        int start = (int) pageable.getOffset();
-//        int end = Math.min((start + pageable.getPageSize()), filterRevisions.size());
-//        Page<HistoricoResponseDTO> relatorioHistorico = new PageImpl<>(filterRevisions.subList(start, end), pageable,
-//                filterRevisions.size());
-//        return relatorioHistorico;
 
         return paginarResultado(field, pageable, filterRevisions);
     }
@@ -155,6 +154,41 @@ public class HistoricoPessoaService {
                 }
             }
         }
+    }
+
+    public DataHistoricoResponseDTO buscaDataAlteracao(Long idPessoa) {
+        AuditReader auditReader = AuditReaderFactory.get(entityManager);
+        List<Number> revisions = auditReader.getRevisions(Pessoa.class, idPessoa);
+
+        DataHistoricoResponseDTO dto = getDataHistoricoOutputDTO(idPessoa, auditReader, revisions);
+        return dto;
+    }
+
+    protected static DataHistoricoResponseDTO getDataHistoricoOutputDTO(Long id, AuditReader auditReader, List<Number> revisions) {
+        if (revisions.isEmpty()) {
+            throw new ObjectNotFoundException("Não foi encontrado nenhum histórico com id fornecido. Id: " + id);
+        }
+
+        RevEntity lastRevision = null;
+        RevEntity firistRevision = auditReader.findRevision(RevEntity.class, revisions.get(0));
+        Integer ultimoIndice = revisions.size() - 1;
+        if(ultimoIndice >= 1) {
+            lastRevision = auditReader.findRevision(RevEntity.class, revisions.get(ultimoIndice));
+        }
+        DataHistoricoResponseDTO dataHistoricoOutputDTO = getDataHistoricoResponseDTO(firistRevision, lastRevision);
+        return dataHistoricoOutputDTO;
+    }
+
+    private static DataHistoricoResponseDTO getDataHistoricoResponseDTO(RevEntity firistRevision, RevEntity lastRevision) {
+        DataHistoricoResponseDTO dataHistoricoOutputDTO = new DataHistoricoResponseDTO();
+        dataHistoricoOutputDTO.setIsCadastroCompleto(true);
+        dataHistoricoOutputDTO.setUsuarioCriacao(firistRevision.getUsuario());
+        dataHistoricoOutputDTO.setDataCriacao(LocalDateTime.ofInstant(Instant.ofEpochMilli(firistRevision.getTimestemp()),
+                ZoneId.systemDefault()));
+        dataHistoricoOutputDTO.setUsuarioUltimaAlteracao(lastRevision.getUsuario());
+        dataHistoricoOutputDTO.setDataUltimaAlteracao(LocalDateTime.ofInstant(Instant.ofEpochMilli(lastRevision.getTimestemp()),
+                ZoneId.systemDefault()));
+        return dataHistoricoOutputDTO;
     }
 
 }
