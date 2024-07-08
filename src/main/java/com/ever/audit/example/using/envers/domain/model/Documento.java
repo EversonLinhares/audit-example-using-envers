@@ -20,6 +20,11 @@ public class Documento {
 
     private String nome;
 
+    private String fileHash;
+
     @Lob
-    private byte[] file;
+    private String fileBase64;
+
+//    @Lob
+//    private byte[] file;
 }

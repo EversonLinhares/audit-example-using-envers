@@ -3,6 +3,8 @@ package com.ever.audit.example.using.envers.api.controller;
 import com.ever.audit.example.using.envers.domain.model.Documento;
 import com.ever.audit.example.using.envers.domain.service.DocumentoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,8 @@ public class DocumentoController {
     private final DocumentoService documentoService;
 
     @PostMapping
-    public ResponseEntity<Void> cadastrar(@RequestParam MultipartFile file) throws IOException {
-        Documento doc = documentoService.create(file);
+    public ResponseEntity<Void> cadastrar(@RequestParam MultipartFile file ,@RequestParam("assinatura") String assinatura) throws IOException {
+        Documento doc = documentoService.create(file,assinatura);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(doc.getId())
@@ -33,16 +35,20 @@ public class DocumentoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getPDF(@PathVariable("id") Long id ) {
-        Documento document =  documentoService.findById(id);
-        if (Objects.nonNull(document) && Objects.nonNull(document.getFile())) {
-            return ResponseEntity.ok()
-                    .headers(createHeaders(document))
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(document.getFile());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+    public ResponseEntity<byte[]> getPDF(@PathVariable("id") Long id) throws IOException {
+        Documento document = documentoService.findById(id);
+        byte[] signedFileBytes = documentoService.getFileFromHash(document.getFileBase64());
+
+        return ResponseEntity.ok()
+                        .headers(createHeaders(document))
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(signedFileBytes);
+    }
+
+    private HttpHeaders createHeaders(Documento document) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=" + document.getNome());
+        return headers;
     }
 
 }
